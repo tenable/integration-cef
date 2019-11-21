@@ -105,4 +105,4 @@ tenable-cef --severity high --severity critical
 
 ## Changelog
 
-Visit the [changelog][CHANGELOG.md].
+Visit the [changelog](CHANGELOG.md).
