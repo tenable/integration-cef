@@ -38,7 +38,7 @@ class CEFSender:
             'low': 'Low',
             'medium': 'Medium',
             'high': 'High',
-            'Critical': 'Very-High'
+            'critical': 'Very-High'
         }
 
         # Format the data into the expected format and then pass the event to

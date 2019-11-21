@@ -46,12 +46,10 @@ import click, logging, time
     help='Syslog Destination for CEF Formatted Data', default='127.0.0.1')
 @click.option('--port', '-p', type=click.INT, envvar='DEST_PORT',
     help='Syslog Port for CEF Formatted Data', default=514)
-@click.option('--sources', '-S', multiple=True,
-    help='Tenable.io asset sources')
 @click.option('--severity', multiple=True,
     help='Tenable.io vulnerability severity')
 def cli(tio_access_key, tio_secret_key, verbose, observed_since, run_every,
-        threads, destination, port, sources, severity):
+        threads, destination, port, severity):
     '''
     Tenable.io -> CEF Transformer & Ingester
     '''
@@ -73,7 +71,7 @@ def cli(tio_access_key, tio_secret_key, verbose, observed_since, run_every,
         build=__version__)
     cef = CEFSender(destination, port)
     ingest = TioTransform(tio, cef)
-    ingest.ingest(observed_since, threads, sources, severity)
+    ingest.ingest(observed_since, threads, list(severity))
 
     # If we are expected to continually re-run the transformer, then we will
     # need to track the passage of time and run every X hours, where X is

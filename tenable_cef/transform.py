@@ -13,6 +13,7 @@ def trunc(text, limit):
     Returns:
         str: The truncated string
     '''
+    text = text.replace('|', '\\|').replace('=', '\\=')
     if len(text) >= limit:
         return '{}...'.format(text[:limit - 4])
     return text
@@ -41,19 +42,21 @@ class TioTransform:
             dport=vuln.get('port').get('port'),
             proto=vuln.get('port').get('protocol'),
             rt=arrow.get(vuln.get('last_found')).timestamp * 1000,
-            cs1=trunc(vuln.get('output'), 4000),
-            cs1Label='Vulnerability Output',
-            cs2=trunc(plugin.get('description'), 4000),
-            cs2Label='Vulnerability Description',
-            cs3=trunc(plugin.get('solution'), 4000),
-            cs3Label='Vulnerability Solution',
+            cs1=trunc(vuln.get('output', 'None'), 1000),
+            cs1Label='VulnerabilityOutput',
+            cs2=trunc(plugin.get('description', 'None'), 1000),
+            cs2Label='VulnerabilityDescription',
+            cs3=trunc(plugin.get('solution', 'None'), 1000),
+            cs3Label='VulnerabilitySolution',
             cs4=plugin.get('cvss_base_score'),
-            cs4Label='CVSS Base Score',
+            cs4Label='CVSSBase core',
             cs5=' '.join(plugin.get('cve', [])),
             cs5Label='CVE',
+            cs6=plugin.get('vpr', {}).get('score'),
+            cs6Label='VPRScore',
         )
 
-    def ingest(self, observed_since, threads=2, sources=None, severity=None):
+    def ingest(self, observed_since, threads=2, severity=None):
         '''
         Perform the ingestion
 
@@ -67,19 +70,6 @@ class TioTransform:
         '''
         if not severity:
             severity = ['low', 'medium', 'high', 'critical']
-        # The first thing that we need to do is perform the asset resource
-        # generation.  We will export all of the assets that have data from the
-        # Azure connector and process that information to build the cache that
-        # we will need for the vuln ingestion.
-        if sources:
-            self._log.info('collecting asset records')
-            assets = self.tio.exports.assets(sources=['Azure'],
-                updated_at=observed_since)
-            self._assets = list()
-            for asset in assets:
-                self._assets.append(asset.get('id'))
-            self._log.info('discovered {} {} assets'.format(
-                len(self._assets), ','.join(sources)))
 
         # Now we need to  transform the vulnerability data.  We will initiate an
         # export of the vulnerabilities from Tenable.io.  If the vulnerability
@@ -91,9 +81,7 @@ class TioTransform:
 
         pool = ThreadPool(threads)
         for vuln in vulns:
-            if ((sources and vuln.get('asset').get('uuid') in self._assets)
-              or not sources):
-                vcounter += 1
-                pool.add_task(self._transform_vulnerability, vuln)
+            vcounter += 1
+            pool.add_task(self._transform_vulnerability, vuln)
         pool.wait_completion()
         self._log.info('transformed and ingested {} vulns'.format(vcounter))
