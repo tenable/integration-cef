@@ -19,28 +19,10 @@ SIEM.  The integration will leverage the following fields:
 * **Custom Field 3 (_cs3_ & _cs3Label_)**: Vulnerability Solution
 * **Custom Field 4 (_cs4_ & _cs4Label_)**: CVSS Base Score
 
-Example Event (newlined for easier reading):
+Example Event:
 
 ```
-CEF:0|Tenable|Tenable.io|1.0.0|50686|IP Forwarding Enabled|Medium|
-dst=192.168.0.100
-dmac=00:DE:AD:BE:EF:00
-dhost=192.168.101.193
-dport=0
-proto=TCP
-rt=1574316940000
-cs1=None
-cs1Label=VulnerabilityOutput
-cs2=The remote host has IP forwarding enabled. An attacker can exploit\nthis to route packets through the host and potentially bypass some\nfirewalls / routers / NAC filtering. \n\nUnless the remote host is a router, it is recommended that you disable\nIP forwarding.
-cs2Label=VulnerabilityDescription
-cs3=On Linux, you can disable IP forwarding by doing :\n\necho 0 > /proc/sys/net/ipv4 ip_forward\n\nOn Windows, set the key 'IPEnableRouter' to 0 under\n\nHKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Tcpip\Parameters\n\nOn Mac OS X, you can disable IP forwarding by executing the command :\n\nsysctl -w net.inet.ip.forwarding=0\n\nFor other systems, check with your vendor.
-cs3Label=VulnerabilitySolution
-cs4=5.8
-cs4Label=CVSSBaseScore
-cs5=CVE-1999-0511
-cs5Label=CVE
-cs6=None
-cs6Label=VPRScore
+CEF:0|Tenable|Tenable.io|1.0.0|8555|Mac OS X < 10.10 Multiple Vulnerabilities (APPLE-SA-2014-10-16-1 OS X Yosemite v10.10)|Very-High|dst=192.168.0.100 dmac=00:de:ad:be:ef:00 dhost=192.168.0.100 dport=0 proto=TCP rt=1574324071000 cs1=The detected OS X version is :\nOS X 10_9_2 cs1Label=VulnerabilityOutput cs2=Apple OS X 10.10 (Yosemite) contains fixes for the following components: \n  - 802.1X\n  - AFP File Server\n  - App Sandbox\n  - Bash\n  - Bluetooth\n  - CFPreferences\n  - CUPS\n  - Certificate Trust Policy\n  - CoreStorage\n  - Dock\n  - IOAcceleratorFamily\n  - IOHIDFamily\n  - IOKit\n  - Kernel\n  - LaunchServices\n  - LoginWindow\n  - MCX Desktop Config Profiles\n  - Mail\n  - NetFS Client Framework\n  - QuickTime\n  - Safari\n  - Secure Transport\n  - Code Signing\n  - Security\n  - apache\n  - fdesetup\n  - iCloud Find My Mac cs2Label=VulnerabilityDescription cs3=Upgrade to OS X 10.10 or higher. cs3Label=VulnerabilitySolution cs4=10.0 cs4Label=CVSSBase core cs5=CVE-2014-4435 CVE-2014-4446 CVE-2014-4434 CVE-2014-4444 CVE-2014-4433 CVE-2014-4432 CVE-2014-4443 CVE-2014-4428 CVE-2014-4417 CVE-2014-4439 CVE-2014-4427 CVE-2014-4438 CVE-2014-4437 CVE-2014-4426 CVE-2014-4425 CVE-2014-4436 CVE-2014-4391 CVE-2014-4431 CVE-2014-4442 CVE-2014-4441 CVE-2014-4430 CVE-2014-4440 cs5Label=CVE cs6=5.9 cs6Label=VPRScore
 ```
 
 ## Requirements
@@ -77,7 +59,6 @@ Options:
                                 import.
   -d, --destination TEXT        Syslog Destination for CEF Formatted Data
   -p, --port INTEGER            Syslog Port for CEF Formatted Data
-  -S, --sources TEXT            Tenable.io asset sources
   --severity TEXT               Tenable.io vulnerability severity
   --help                        Show this message and exit.
 ```
@@ -121,3 +102,7 @@ Only import High and Critical vulnerabilities:
 ```
 tenable-cef --severity high --severity critical
 ```
+
+## Changelog
+
+Visit the [changelog][CHANGELOG.md].
