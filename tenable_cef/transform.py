@@ -41,7 +41,7 @@ class TioTransform:
             dhost=asset.get('hostname'),
             dport=vuln.get('port').get('port'),
             proto=vuln.get('port').get('protocol'),
-            rt=arrow.get(vuln.get('last_found')).timestamp * 1000,
+            rt=arrow.get(vuln.get('last_found')).timestamp() * 1000,
             cs1=trunc(vuln.get('output', 'None'), 1000),
             cs1Label='VulnerabilityOutput',
             cs2=trunc(plugin.get('description', 'None'), 1000),
